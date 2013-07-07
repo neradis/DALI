@@ -18,9 +18,9 @@ public class SilverFileReadOperations {
         for (String endpoint : endPoints) {
             linkCount.put(endpoint, 0);
         }
-        if(new File(Constants.SAMEASPATH).exists()){
+        if (new File(Constants.SAMEASPATH).exists()) {
             try {
-                
+
                 BufferedReader reader = new BufferedReader(new FileReader(
                         Constants.SAMEASPATH));
                 String cuttedEndPoint = theEndpoint.replaceAll("sparql", "");
@@ -44,11 +44,13 @@ public class SilverFileReadOperations {
                     }
                 }
                 reader.close();
-                SilverFileWriteOperations.writeLinkCount(theEndpoint, linkCount);
+                SilverFileWriteOperations
+                        .writeLinkCount(theEndpoint, linkCount);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }else System.out.println("No sameAS Links detected.");
+        } else
+            System.out.println("No sameAS Links detected.");
     }
 
     public static Map<String, Integer> readLinkCount(String theEndpoint) {

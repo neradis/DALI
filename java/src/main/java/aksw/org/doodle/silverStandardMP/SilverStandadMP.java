@@ -17,11 +17,8 @@ public class SilverStandadMP {
 
     public static void main(String args[]) throws RepositoryException,
             IOException {
-        // computeRanking("http://labs.mondeca.com/endpoint/ends");
         // computeRanking("http://dbpedia.org/sparql");
         computeRankingForOne("http://linkedgeodata.org/sparql");
-        SilverFileReadOperations
-                .proceedLines("http://linkedgeodata.org/sparql");
     }
 
     /**
@@ -33,19 +30,21 @@ public class SilverStandadMP {
         SilverFileWriteOperations.clear(Constants.LINKCOUNTPATH);
         SilverFileWriteOperations.clear(Constants.SAMEASPATH);
         query(theEndpoint);
+        SilverFileReadOperations.proceedLines(theEndpoint);
         SilverFileWriteOperations.clear(Constants.SAMEASPATH);
     }
 
     /**
-     * Computes Ranking for all Endpoints of List at Constants.ENDPOINTFILE
+     * Computes Ranking for all Endpoints of list at Constants.ENDPOINTFILE
      * 
      * @param theEndpoint
      */
-    public static void computeRankingForAll(String theEndpoint) {
+    public static void computeRankingForAll() {
         SilverFileWriteOperations.clear(Constants.LINKCOUNTPATH);
         for (String endpoint : SilverFileReadOperations.readEndpoints()) {
             SilverFileWriteOperations.clear(Constants.SAMEASPATH);
             query(endpoint);
+            SilverFileReadOperations.proceedLines(endpoint);
         }
         SilverFileWriteOperations.clear(Constants.SAMEASPATH);
     }
