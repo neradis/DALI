@@ -17,59 +17,61 @@ public class SilverStandadMP {
 
     public static void main(String args[]) throws RepositoryException,
             IOException {
-
         // computeRanking("http://labs.mondeca.com/endpoint/ends");
-        computeRanking("http://dbpedia.org/sparql");
-        // // computeRanking("http://linkedgeodata.org/sparql");
-        SilverFileWriteOperations.proceedLines("http://dbpedia.org/sparql");
+        // computeRanking("http://dbpedia.org/sparql");
+        computeRankingForOne("http://linkedgeodata.org/sparql");
+        SilverFileReadOperations
+                .proceedLines("http://linkedgeodata.org/sparql");
     }
 
-    // TODO Iterate over all Endpoints
-    private static void computeRanking(String theEndpoint) {
-        SilverFileWriteOperations.clear(Constants.SAMEASPATH);
+    /**
+     * Computes Ranking for one Endpoint
+     * 
+     * @param theEndpoint
+     */
+    public static void computeRankingForOne(String theEndpoint) {
         SilverFileWriteOperations.clear(Constants.LINKCOUNTPATH);
-        int end = 0;
-        // for (String endpoint : readEndpoints()) {
-        System.out.println(theEndpoint);
+        SilverFileWriteOperations.clear(Constants.SAMEASPATH);
         query(theEndpoint);
-
-        // ask for all owl:sameAs and save them
-        // getSameAs("http://dbpedia.org/sparql/", end);
-        end++;
-        // }
+        SilverFileWriteOperations.clear(Constants.SAMEASPATH);
     }
 
-    // TODO Offset
+    /**
+     * Computes Ranking for all Endpoints of List at Constants.ENDPOINTFILE
+     * 
+     * @param theEndpoint
+     */
+    public static void computeRankingForAll(String theEndpoint) {
+        SilverFileWriteOperations.clear(Constants.LINKCOUNTPATH);
+        for (String endpoint : SilverFileReadOperations.readEndpoints()) {
+            SilverFileWriteOperations.clear(Constants.SAMEASPATH);
+            query(endpoint);
+        }
+        SilverFileWriteOperations.clear(Constants.SAMEASPATH);
+    }
+
     private static void query(String theEndpoint) {
-        ArrayList<ArrayList<String>> resultLines = new ArrayList<ArrayList<String>>();
-        int oldCount = 0;
-        int newCount = 0;
+        // Do not change offset!!
+        int offset = 1000;
+        int count = 0;
         do {
-            oldCount = newCount;
+            ArrayList<ArrayList<String>> resultLines = new ArrayList<ArrayList<String>>();
+            // Do not change Limit and Offset!
             String query = "PREFIX owl:<http://www.w3.org/2002/07/owl#> "
-                    +
-                    // "SELECT ?s ?o " +
-                    // "WHERE { " +
-                    "       SELECT DISTINCT ?s ?o "
-                    + "       WHERE { ?s owl:sameAs ?o. } "
-                    + "       ORDER BY ASC (?s) " +
-                    // } " +
-                    // "OFFSET " + oldCount + " " +
-                    "LIMIT " + 10000;
-            // String query =
-            // "PREFIX owl:<http://www.w3.org/2002/07/owl#> SELECT ?s ?o WHERE { ?s owl:sameAs ?o } OFFSET "
-            // + oldCount + " LIMIT  40000";
-            // String query = "Select ?s ?o Where{ ?s ?p ?o } Limit 1000";
-            // String prefVoid = "<http://rdfs.org/ns/void#";
-            // String query = "SELECT ?s ?o WHERE{ ?s " + prefVoid
-            // + "sparqlEndpoint> ?o.}";
-            System.out.println(query);
+                    + "       SELECT DISTINCT ?s ?o "
+                    + "       WHERE { ?s owl:sameAs ?o. } " + "OFFSET " + count
+                    + " LIMIT " + offset;
+            System.out.println("Detected sameAs: " + count);
             try {
                 Query sparqlQuery = QueryFactory
                         .create(query, Syntax.syntaxARQ);
                 QueryExecution qexec = QueryExecutionFactory.sparqlService(
                         theEndpoint, sparqlQuery);
+                // Sometimes not continuing here:
                 ResultSet results = qexec.execSelect();
+                if (!results.hasNext()) {
+                    break;
+                }
                 while (results.hasNext()) {
                     ArrayList<String> line = new ArrayList<String>();
                     QuerySolution sln = results.next();
@@ -77,12 +79,12 @@ public class SilverStandadMP {
                     line.add(sln.get("?o").toString());
                     resultLines.add(line);
                 }
-                SilverFileWriteOperations.saveLines(resultLines, 1);
+                count += offset;
+                SilverFileWriteOperations.saveLines(resultLines);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // newCount = 40000 + oldCount;
             System.gc();
-        } while (oldCount < newCount);
+        } while (true);
     }
 }
