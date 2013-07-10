@@ -1,7 +1,5 @@
 package de.uni_leipzig.mack.evaluation;
 
-import com.google.common.collect.BiMap;
-
 import java.util.Iterator;
 
 /**
@@ -10,6 +8,5 @@ import java.util.Iterator;
  */
 public abstract class EvaluationMetric {
 
-    public abstract double compute(Iterator<BiMap<KnowledgeBase,Integer>> rankedQueryResults,
-                                   BiMap<KnowledgeBase,Integer> rankedRelevanceReference);
+    public abstract double compute(Iterator<ResultRelevancePair> resultsWithRelevance);
 }

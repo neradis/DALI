@@ -1,6 +1,7 @@
 package de.uni_leipzig.mack.evaluation;
 
 import aksw.org.doodle.dataset.VectorDescription;
+import com.google.common.base.Objects;
 
 /**
  * Created by Markus Ackermann.
@@ -39,5 +40,11 @@ class KnowledgeBase {
     @Override
     public int hashCode() {
         return uri != null ? uri.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        String vd = vectorDescription != null ? vectorDescription.features.size() + " features" : "[no feature vector]";
+        return Objects.toStringHelper(this).add("uri", uri).add("feature vector", vd).toString();
     }
 }
