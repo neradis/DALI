@@ -12,33 +12,36 @@ import java.util.Map;
 
 public class SilverFileReadOperations {
 
-    public static void proceedLines(String theEndpoint) {
+    public static synchronized void proceedLines(String theEndpoint, Integer number, List<String> theEndPoints) {
         Map<String, Integer> linkCount = new HashMap<String, Integer>();
-        List<String> endPoints = cutEndpoints(readEndpoints());
+        List<String> endPoints = cutEndpoints(theEndPoints);
         for (String endpoint : endPoints) {
             linkCount.put(endpoint, 0);
         }
-        if (new File(Constants.SAMEASPATH).exists()) {
+        File sameAsFile = new File(Constants.SAMEASPATH + number.toString() + ".txt");
+        if (sameAsFile.exists()) {
             try {
 
-                BufferedReader reader = new BufferedReader(new FileReader(
-                        Constants.SAMEASPATH));
+                BufferedReader reader = new BufferedReader(new FileReader(sameAsFile));
                 String cuttedEndPoint = theEndpoint.replaceAll("sparql", "");
                 while (reader.ready()) {
                     String linee = reader.readLine();
                     String[] line = linee.split(Constants.SEPARATOR);
                     if (!line.equals(null)) {
                         for (String endpoint : endPoints) {
-                            if (line[0].contains(cuttedEndPoint)
-                                    && !endpoint.isEmpty()
-                                    && line[1].contains(endpoint)) {
-                                int i = linkCount.get(endpoint);
-                                linkCount.put(endpoint, ++i);
-                            } else if (line[1].contains(cuttedEndPoint)
-                                    && !endpoint.isEmpty()
-                                    && line[0].contains(endpoint)) {
-                                int i = linkCount.get(endpoint);
-                                linkCount.put(endpoint, ++i);
+                            try {
+                                if (line[0].contains(cuttedEndPoint)
+                                        && !endpoint.isEmpty()
+                                        && line[1].contains(endpoint)) {
+                                    int i = linkCount.get(endpoint);
+                                    linkCount.put(endpoint, ++i);
+                                } else if (line[1].contains(cuttedEndPoint)
+                                        && !endpoint.isEmpty()
+                                        && line[0].contains(endpoint)) {
+                                    int i = linkCount.get(endpoint);
+                                    linkCount.put(endpoint, ++i);
+                                }
+                            } catch (ArrayIndexOutOfBoundsException e) {
                             }
                         }
                     }
@@ -49,13 +52,12 @@ public class SilverFileReadOperations {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else
-            System.out.println("No sameAS Links detected.");
+        }
     }
 
-    public static Map<String, Integer> readLinkCount(String theEndpoint) {
+    public synchronized static Map<String, Integer> readLinkCount(String theEndpoint, List<String> theEndPoints) {
         Map<String, Integer> linkCount = new HashMap<String, Integer>();
-        List<String> endPoints = cutEndpoints(readEndpoints());
+        List<String> endPoints = cutEndpoints(theEndPoints);
         for (String endpoint : endPoints) {
             linkCount.put(endpoint, 0);
         }
@@ -78,24 +80,7 @@ public class SilverFileReadOperations {
         return linkCount;
     }
 
-    public static ArrayList<String> readEndpoints() {
-        ArrayList<String> list = new ArrayList<String>();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(
-                    Constants.ENDPOINTFILE));
-            while (reader.ready()) {
-                list.add(reader.readLine().split("\t")[0]);
-            }
-            reader.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    private static List<String> cutEndpoints(List<String> theEndpoint) {
+    private synchronized static List<String> cutEndpoints(List<String> theEndpoint) {
         List<String> newEndpoints = new ArrayList<String>();
         for (String endpoint : theEndpoint) {
             endpoint = endpoint.replaceAll("sparql", "");
