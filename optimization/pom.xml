@@ -14,47 +14,51 @@
 
     <name>Dali-Optimization</name>
 
+    <properties>
+        <root.basedir>${project.basedir}/..</root.basedir>
+    </properties>
+
     <profiles>
         <profile>
             <id>buildWebservice</id>
-             <build>
-                 <plugins>
-                     <plugin>
-                         <groupId>org.apache.maven.plugins</groupId>
-                         <artifactId>maven-shade-plugin</artifactId>
-                         <version>2.1</version>
-                         <executions>
-                             <execution>
-                                 <phase>package</phase>
-                                 <goals>
-                                     <goal>shade</goal>
-                                 </goals>
-                                 <configuration>
-                                     <artifactSet>
-                                         <includes>
-                                             <include>org.codehaus.groovy:*</include>
-                                             <inclue>org.ow2.asm:*</inclue>
-                                         </includes>
-                                         <excludes>
-                                             <exclude>antlr:antlr</exclude>
-                                         </excludes>
-                                     </artifactSet>
-                                     <relocations>
-                                         <relocation>
-                                             <pattern>org.objectweb.asm</pattern>
-                                             <shadedPattern>org.objectweb.asm4.shaded</shadedPattern>
-                                         </relocation>
-                                     </relocations>
-                                     <minimizeJar>true</minimizeJar>
-                                     <dependencyReducedPomLocation>
-                                         ${project.build.directory}/dependency-reduced-pom.xml
-                                     </dependencyReducedPomLocation>
-                                 </configuration>
-                             </execution>
-                         </executions>
-                     </plugin>
-                 </plugins>
-             </build>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>2.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactSet>
+                                        <includes>
+                                            <include>org.codehaus.groovy:*</include>
+                                            <inclue>org.ow2.asm:*</inclue>
+                                        </includes>
+                                        <excludes>
+                                            <exclude>antlr:antlr</exclude>
+                                        </excludes>
+                                    </artifactSet>
+                                    <relocations>
+                                        <relocation>
+                                            <pattern>org.objectweb.asm</pattern>
+                                            <shadedPattern>org.objectweb.asm4.shaded</shadedPattern>
+                                        </relocation>
+                                    </relocations>
+                                    <minimizeJar>false</minimizeJar>
+                                    <dependencyReducedPomLocation>
+                                        ${project.build.directory}/dependency-reduced-pom.xml
+                                    </dependencyReducedPomLocation>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
@@ -67,11 +71,45 @@
             <groupId>aksw.org</groupId>
             <artifactId>dali-opt-extensions</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.opt4j</groupId>
+            <artifactId>opt4j-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opt4j</groupId>
+            <artifactId>opt4j-optimizers</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opt4j</groupId>
+            <artifactId>opt4j-viewer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opt4j</groupId>
+            <artifactId>opt4j-tutorial</artifactId>
+        </dependency>
+        <!-- <dependency>
+             <groupId>de.indisopht</groupId>
+             <artifactId>groovy-guice</artifactId>
+             <version>0.4.0</version>
+         </dependency>
+
+         &lt;!&ndash; two dependencies to make the guice/groovy-guice duo work &ndash;&gt;
+         <dependency>
+             <groupId>org.sonatype.sisu.inject</groupId>
+             <artifactId>cglib</artifactId>
+             <version>2.2.2</version>
+         </dependency>
+         <dependency>
+             <groupId>org.osgi</groupId>
+             <artifactId>org.osgi.core</artifactId>
+             <version>5.0.0</version>
+         </dependency>-->
+
         <!-- groovy will be added to the final jar artifact to shade the ASM 4 library (it is conflicting with
              ASM 3 dependency of com.sun.jersey:jersey-server:1.16 -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy</artifactId>
+            <artifactId>groovy-all</artifactId>
             <optional>true</optional>
         </dependency>
         <!-- a groovy dependency that doesn't have to be shaded -> so carry it on for regular dep. resolution -->
@@ -93,6 +131,15 @@
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <!--<mainClass>aksw.org.doodle.webservice.Main</mainClass>-->
+                    <mainClass>de.uni_leipzig.mack.processes.TestLoading</mainClass>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
@@ -116,7 +163,72 @@
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-eclipse-compiler</artifactId>
                 <version>2.8.0-01</version>
-                <extensions>true</extensions>  <!-- ensures compilation of src/*/groovy -->
+                <extensions>true</extensions>
+                <!-- ensures compilation of src/*/groovy -->
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <dependencies>
+                    <!-- for the regexp -->
+                    <dependency>
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant-nodeps</artifactId>
+                        <version>1.8.1</version>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                        <version>1.7.5</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <target>
+                                <!-- Setup the path -->
+                                <!-- use maven.compile.classpath instead db4o.enhance.path -->
+
+                                <!-- Define enhancement tasks -->
+                                <typedef resource="instrumentation-def.properties"
+                                         classpathref="maven.compile.classpath"
+                                         loaderref="db4o.enhance.loader"/>
+
+                                <!-- Enhance classes which include the @Db4oPersistent annotation -->
+                                <typedef name="annotation-filter"
+                                         classname="de.uni_leipzig.mack.persistence.instrumentation.Db4oIntrumentationFilter"
+                                         classpathref="maven.compile.classpath"
+                                         loaderref="db4o.enhance.loader"/>
+
+                                <typedef name="native-query"
+                                         classname="com.db4o.nativequery.main.NQAntClassEditFactory"
+                                         classpathref="maven.compile.classpath"
+                                         loaderref="db4o.enhance.loader"/>
+
+                                <!-- Instrumentation -->
+                                <db4o-instrument classTargetDir="target/classes" verbose="false">
+                                    <classpath refid="maven.compile.classpath"/>
+                                    <sources dir="target/classes">
+                                        <include name="**/*.class"/>
+                                    </sources>
+
+                                    <!-- Optimise Native Queries -->
+                                    <native-query-step/>
+
+                                    <transparent-activation-step>
+                                        <annotation-filter/>
+                                        <regexp pattern="^de\.uni_leipzig\.mack\.persistence\.models"/>
+                                    </transparent-activation-step>
+                                </db4o-instrument>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

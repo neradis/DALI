@@ -9,4 +9,6 @@ import java.util.Iterator;
 public abstract class EvaluationMetric {
 
     public abstract double compute(Iterator<ResultRelevancePair> resultsWithRelevance);
+
+    public abstract String getName();
 }

@@ -19,7 +19,7 @@ class ConfigurationLoader {
     static Config loadConfigForEnv(String envName) {
         def stableConfigs = CONFIG_RESOURCE_NAMES.collect { String name ->
             URL configLocation = Resources.getResource(name)
-            def confObj = new ConfigSlurper(envName).parse(configLocation)
+            def confObj = new ConfigSlurper(envName ?: 'dev').parse(configLocation)
             confObj = StableConfigObject.copyOf(confObj)
             mergeInDefaults(confObj)
         }
@@ -124,18 +124,18 @@ class StableConfigObject extends ConfigObject {
 
 @TypeChecked
 @Log4j('logger')
-class Config extends ConfigObject{
-    protected static Map<String,Config> cache = Maps.newHashMap()
+class Config extends ConfigObject {
+    protected static Map<String, Config> cache = Maps.newHashMap()
 
-    @Delegate protected ConfigObject delegate
+    @Delegate
+    protected ConfigObject delegate
 
     static Config byProperty() {
-        def env = System.properties.getProperty('environment')
-        forEnvironment(env)
+        forEnvironment(Environment.byProperty())
     }
 
-    static Config forEnvironment(String env) {
-        cache.getWithDefault(env, { ConfigurationLoader.loadConfigForEnv(env) })
+    static Config forEnvironment(Environment env) {
+        cache.getWithDefault(env.name, { ConfigurationLoader.loadConfigForEnv(env.name) })
     }
 
     protected Config(ConfigObject delegate) {
@@ -145,8 +145,8 @@ class Config extends ConfigObject{
     def <T> T getConf(Closure selector, Class<T> expectedType) {
         try {
             def val = selector.call(delegate)
-            if(val.is(null)) throw new NullPointerException('Config value not present')
-            if(!expectedType.isInstance(val)) throw new ClassCastException('Unexpected type of config value')
+            if (val.is(null)) throw new NullPointerException('Config value not present')
+            if (!expectedType.isInstance(val)) throw new ClassCastException('Unexpected type of config value')
             return expectedType.cast(val)
         } catch (Exception e) {
             throw new ConfigurationException('Error fetching config value', e)

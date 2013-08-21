@@ -12,20 +12,25 @@ import java.util.Set;
 public class MRRanyRelevant extends EvaluationMetric {
 
     @Override
+    public String getName() {
+        return "MRR-any";
+    }
+
+    @Override
     public double compute(Iterator<ResultRelevancePair> resultsWithRelevanceIter) {
 
         int queryCount = 0;
         double mrrNom = 0d;
 
-        while(resultsWithRelevanceIter.hasNext()) {
+        while (resultsWithRelevanceIter.hasNext()) {
             queryCount++;
             ResultRelevancePair quRel = resultsWithRelevanceIter.next();
             int minimalRank = Integer.MAX_VALUE;
             Set<KnowledgeBase> intersection = Sets.intersection(quRel.getQueryResult().keySet(),
-                                                                    quRel.getRelevanceEstimation().keySet());
+                    quRel.getRelevanceEstimation().keySet());
 
-            if(!intersection.isEmpty()) {
-                for(KnowledgeBase relevantResult : intersection) { //find the relevant query result with lowest rank
+            if (!intersection.isEmpty()) {
+                for (KnowledgeBase relevantResult : intersection) { //find the relevant query result with lowest rank
                     int resultRank = quRel.getQueryResult().get(relevantResult);
                     minimalRank = resultRank < minimalRank ? resultRank : minimalRank;
                 }

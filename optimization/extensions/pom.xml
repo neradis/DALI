@@ -4,6 +4,7 @@
 
     <properties>
         <groovy.version>2.1.5</groovy.version>
+        <db4o.version>8.0-SNAPSHOT</db4o.version>
     </properties>
 
     <artifactId>dali-opt-extensions</artifactId>
@@ -17,7 +18,6 @@
     </parent>
 
     <name>Dali-Optimization (extensions)</name>
-    <url>http://maven.apache.org</url>
 
     <dependencies>
         <dependency>
@@ -45,8 +45,33 @@
             <artifactId>gpars</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.neodatis.odb</groupId>
-            <artifactId>neodatis-odb</artifactId>
+            <groupId>com.db4o</groupId>
+            <artifactId>db4o-full-java5</artifactId>
+            <version>${db4o.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.db4o</groupId>
+            <artifactId>db4o-tools-java5</artifactId>
+            <version>${db4o.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!--<dependency>
+            <groupId>com.db4o</groupId>
+            <artifactId>db4o-taj-java5</artifactId>
+            <version>${db4o.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.db4o</groupId>
+            <artifactId>db4o-nqopt-java5</artifactId>
+            <version>${db4o.version}</version>
+            <scope>compile</scope>
+        </dependency>-->
+        <dependency>
+            <groupId>com.db4o</groupId>
+            <artifactId>db4o-instrumentation-java5</artifactId>
+            <version>${db4o.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -86,44 +111,16 @@
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-eclipse-compiler</artifactId>
                 <version>2.8.0-01</version>
-                <extensions>true</extensions>  <!-- ensures compilation of src/*/groovy -->
+                <extensions>true</extensions>
+                <!-- ensures compilation of src/*/groovy -->
             </plugin>
-<!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>org.codehaus.groovy:*</include>
-                                    <inclue>org.ow2.asm:*</inclue>
-                                </includes>
-                                <excludes>
-                                    <exclude>antlr:antlr</exclude>
-                                </excludes>
-                            </artifactSet>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.objectweb.asm</pattern>
-                                    <shadedPattern>org.objectweb.asm4.shaded</shadedPattern>
-                                </relocation>
-                            </relocations>
-                            <minimizeJar>true</minimizeJar>
-                            <dependencyReducedPomLocation>
-                                ${project.build.directory}/dependency-reduced-pom.xml
-                            </dependencyReducedPomLocation>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
--->
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>db4o</id>
+            <name>Db4o</name>
+            <url>http://source.db4o.com/maven</url>
+        </repository>
+    </repositories>
 </project>

@@ -40,7 +40,8 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>aksw.org.doodle.webservice.Main</mainClass>
+                    <!--<mainClass>aksw.org.doodle.webservice.Main</mainClass>-->
+                    <mainClass>de.uni_leipzig.mack.TSPTask</mainClass>
                 </configuration>
             </plugin>
             <plugin>

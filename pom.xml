@@ -14,6 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <groovy.version>2.1.5</groovy.version>
         <opt4j.version>3.0.1</opt4j.version>
+        <root.basedir>${project.basedir}</root.basedir>
     </properties>
 
     <modules>
@@ -24,18 +25,18 @@
 
     <profiles>
         <profile>
-           <id>skipTests</id>
-           <build>
-               <plugins>
-                   <plugin>
-                       <groupId>org.apache.maven.plugins</groupId>
-                       <artifactId>maven-surefire-plugin</artifactId>
-                       <configuration>
-                           <skipTests>true</skipTests>
-                       </configuration>
-                   </plugin>
-               </plugins>
-           </build>
+            <id>skipTests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>buildWebservice</id>
@@ -68,7 +69,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>3.8.1</version>
+                <version>4.11</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -112,9 +113,9 @@
                 <version>2.7.0-beta1</version>
             </dependency>
             <dependency>
-                <groupId>org.neodatis.odb</groupId>
-                <artifactId>neodatis-odb</artifactId>
-                <version>1.9.30.689</version>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-all</artifactId>
+                <version>${groovy.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
@@ -129,6 +130,21 @@
             <dependency>
                 <groupId>org.opt4j</groupId>
                 <artifactId>opt4j-core</artifactId>
+                <version>${opt4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opt4j</groupId>
+                <artifactId>opt4j-optimizers</artifactId>
+                <version>${opt4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opt4j</groupId>
+                <artifactId>opt4j-viewer</artifactId>
+                <version>${opt4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opt4j</groupId>
+                <artifactId>opt4j-tutorial</artifactId>
                 <version>${opt4j.version}</version>
             </dependency>
             <dependency>
@@ -172,4 +188,21 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <repositories>
+        <!--<repository>
+            <id>project.local</id>
+            <url>file://${root.basedir}/maven_artifacts</url>
+            <releases>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+        </repository>-->
+        <!--<repository>
+            <id>groovy-guice-maven2-repository</id>
+            <name>Groovy-Guice Maven2 Repository</name>
+            <url>http://groovy-guice.googlecode.com/svn/maven2/repo/</url>
+            <snapshots><enabled>false</enabled></snapshots>
+            <releases><enabled>true</enabled></releases>
+        </repository>-->
+    </repositories>
 </project>

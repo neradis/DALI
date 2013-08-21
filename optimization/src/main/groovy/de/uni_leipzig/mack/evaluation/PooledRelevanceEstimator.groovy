@@ -2,7 +2,6 @@ package de.uni_leipzig.mack.evaluation
 
 import com.google.common.collect.ImmutableSet
 import groovy.transform.CompileStatic
-import groovy.transform.Immutable
 
 /**
  * Created by Markus Ackermann.
@@ -27,9 +26,9 @@ abstract class PooledRelevanceEstimator {
      * if both is Relevant(q,a) and isRelevant(q,b) return true, relevanceComparison(q,a,b) can return any value
      * depending upon a more fine-grained estimation of relevance
      *
-     * @param query      the knowledge base defining the reference point to judge relevance on
-     * @param candidate  the knowledge base for which relevance has to be decided (is candidate relevant for query?)
-     * @return           true, if candidate is relevant for query, false otherwise
+     * @param query the knowledge base defining the reference point to judge relevance on
+     * @param candidate the knowledge base for which relevance has to be decided (is candidate relevant for query?)
+     * @return true , if candidate is relevant for query, false otherwise
      */
     abstract boolean isRelevant(KnowledgeBase query, KnowledgeBase candidate);
 
@@ -37,10 +36,10 @@ abstract class PooledRelevanceEstimator {
      * compare relevance of two candidate knowledge bases (results of a retrieval function) with respect to a given
      * knowledge base (the argument for the retrieval function searching for similar knowledge bases)
      *
-     * @param query        the knowledge base for which relevance is to be judges for (e.g. is candidateA more relevant
+     * @param query the knowledge base for which relevance is to be judges for (e.g. is candidateA more relevant
      *                     as result for query as candidateB?)
-     * @param candidateA    first candidate for relevance
-     * @param candidateB    second candidate for relevance
+     * @param candidateA first candidate for relevance
+     * @param candidateB second candidate for relevance
      * @return a negative integer, zero, or a positive integer as candidateA is less, equally to, or more relevant
      *         to query that candidateB
      */
@@ -71,9 +70,5 @@ abstract class PooledRelevanceEstimator {
 
     KnowledgeBasePool getPool() {
         return pool
-    }
-
-    @CompileStatic
-    static interface KnowledgeBasePool extends Set<KnowledgeBase>{
     }
 }

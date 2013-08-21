@@ -9,10 +9,10 @@ import java.util.*;
 public class Combinatorics {
 
     public static <T> Set<CombinationPair<T>> unorderedCombinations(Collection<T> A, Collection<T> B) {
-        final Set<CombinationPair<T>> unorderedCombinations = new HashSet<CombinationPair <T>>();
-        for(T a : A) {
-            for(T b: B) {
-                unorderedCombinations.add(new CombinationPair<T>(a,b));
+        final Set<CombinationPair<T>> unorderedCombinations = new HashSet<CombinationPair<T>>();
+        for (T a : A) {
+            for (T b : B) {
+                unorderedCombinations.add(new CombinationPair<T>(a, b));
             }
         }
         return unorderedCombinations;
@@ -20,9 +20,29 @@ public class Combinatorics {
 
     public static <T> List<CombinationPair<T>> orderedPairs(Set<T> A, Set<T> B) {
         final List<CombinationPair<T>> pairs = new LinkedList<CombinationPair<T>>();
-        for(T a : A) {
-            for(T b: B) {
-                pairs.add(new CombinationPair<T>(a,b));
+        for (T a : A) {
+            for (T b : B) {
+                pairs.add(new CombinationPair<T>(a, b));
+            }
+        }
+        return pairs;
+    }
+
+    public static <T> List<CombinationPair<T>> symmetricInnerCombinations(Iterable<T> iterable) {
+        final List<CombinationPair<T>> pairs = new LinkedList<CombinationPair<T>>();
+        for (T a : iterable) {
+            Iterator<T> bIter = iterable.iterator(); // not thread safe, since outer and inner iterators
+            T b = bIter.next();                      // are not created atomically
+
+            while (!b.equals(a)) {
+                b = bIter.next(); // skip pairs like (c,a)
+            }
+
+            pairs.add(new CombinationPair<T>(a, b)); // add identical pair e.g. (c,c)
+
+            while (bIter.hasNext()) { // add (c,d),(c,e),(c,f)
+                b = bIter.next();
+                pairs.add(new CombinationPair<T>(a, b));
             }
         }
         return pairs;
